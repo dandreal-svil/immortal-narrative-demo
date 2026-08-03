@@ -48,12 +48,3 @@
     return `<span><b class="label-symbol" aria-hidden="true">${symbol}</b>${text}</span>`;
   }
 
-  function semanticGuide() {
-    return `<div class="semantic-guide" aria-label="Come leggere la storia">
-      <span class="guide-message"><b>Messaggio / dialogo</b>Qualcuno sta parlando; il nome è visibile.</span>
-      <span class="guide-narration"><b>Narrazione</b>Descrive ciò che fai o ciò che accade.</span>
-      <span class="guide-environment"><b>Ambiente</b>Suoni, immagini e percezioni.</span>
-      <span class="guide-system"><b>Regola di gioco</b>Memorie, segnali, intento e consigli.</span>
-    </div>`;
-  }
-
