@@ -1,0 +1,37 @@
+  function initialThread() {
+    return `<p class="story-day">Oggi</p>
+      ${semanticGuide()}
+      <div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Sei sveglio?</div>
+      <div class="bubble incoming urgent"><span class="bubble-meta">Messaggio · Sconosciuto</span>Non aprire la porta.</div>
+      <div class="story-photo"><img src="https://immortal-narrative-m0.dandrea-l.chatgpt.site/images/hero-1891-photo.png" alt="Fotografia di gruppo del 1891 con una persona identica al protagonista" width="1456" height="1088"><span>Parigi • 1891</span></div>
+      <div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Hai già commesso questo errore nel 1891.</div>`;
+  }
+
+  function renderThread() {
+    let html = initialThread();
+    const chosenIdentity = identity();
+    const selectedFirstMove = firstMove();
+
+    if (state.step === 0) {
+      html += `<div class="story-action-panel">${label("✦", "Narrazione")}<p>Una fotografia impossibile è appena comparsa sul tuo telefono.</p><button type="button" data-action="open-conversation">Apri la conversazione</button></div>`;
+    }
+
+    if (state.step >= 1) html += `<div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Prima di rispondermi, scegli cosa cerchi davvero.</div>`;
+
+    if (state.step === 1) {
+      html += `<div class="story-choices" aria-label="Scegli la tua risposta">${identities.map((item) => `<button type="button" data-identity="${item.value}"><strong>${item.label}</strong><span>“${item.response}”</span></button>`).join("")}</div>`;
+    }
+
+    if (state.step >= 2 && chosenIdentity) {
+      html += `<div class="bubble outgoing"><span class="bubble-meta">La tua risposta</span>${chosenIdentity.response}</div>
+        <div class="identity-stamp"><span>Tratto emerso</span><strong>${chosenIdentity.trait}</strong></div>
+        <div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Bene. Anche nel 1891 avresti risposto così.</div>
+        <div class="narration" role="note" aria-label="Narrazione">${label("✦", "Narrazione")}<p>Osservi il tuo volto nella fotografia. Un ricordo riaffiora.</p></div>`;
+    }
+
+    if (state.step === 2) {
+      html += `<div class="memory-reveal"><div class="memory-object" aria-hidden="true"><span>1891</span><i></i></div><div><span>Memoria recuperata</span><h2>Il respiro prima del colpo</h2><p><b>Effetto:</b> riconosci il ritmo con cui un avversario prepara l’azione.</p><p class="memory-risk"><b>Vulnerabilità:</b> per un istante rivivi la tua ultima morte.</p><button type="button" data-action="equip-memory">Equipaggia la Memoria</button></div></div>`;
+    }
+
+    if (state.step >= 3) {
+      html += `<div class="system-line"><b aria-hidden="true">✓</b> Memoria equipaggiata nell’Assetto</div>
