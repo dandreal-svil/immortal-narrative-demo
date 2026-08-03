@@ -1,0 +1,25 @@
+    return html;
+  }
+
+  function renderArchive() {
+    const selectedIdentity = identity();
+    return `<aside class="prototype-archive" aria-label="Scheda del personaggio"><div class="archive-label">Archivio personale</div><h1>Identità incompleta</h1><dl><div><dt>Presente</dt><dd>Sconosciuto</dd></div><div><dt>Prima traccia</dt><dd>Parigi, 1891</dd></div><div><dt>Tratto</dt><dd>${selectedIdentity ? selectedIdentity.trait.split(" — ")[0] : "Non emerso"}</dd></div></dl><div class="archive-memory ${state.step >= 3 ? "equipped" : "locked"}"><span>Slot Memoria</span><strong>${state.step >= 3 ? "Il respiro prima del colpo" : "Vuoto"}</strong><p>${state.step >= 3 ? "+ lettura del ritmo  •  − eco della morte" : "Recupera un frammento del passato"}</p></div><div class="archive-state"><span>Stato</span><strong>${state.result === "wounded" ? "Ferita: Eco della soglia" : state.result ? "Lucidità preservata" : "Nessuna ferita"}</strong></div><p class="archive-note">Simulazione deterministica M0. Nessuna risposta è generata da IA. La demo pubblica non invia dati.</p></aside>`;
+  }
+
+  function render() {
+    const progress = Math.min((state.step + 1) / 9 * 100, 100);
+    app.innerHTML = `<main class="prototype-page"><header class="prototype-header"><a href="#" class="wordmark" data-action="restart">Immortal Narrative</a><div class="prototype-progress" aria-label="Progresso ${Math.min(state.step + 1, 9)} di 9"><span style="width:${progress}%"></span></div><span class="prototype-time">Prototipo M0 • 10 min</span></header><div class="prototype-shell"><section class="story-phone" aria-label="Conversazione interattiva"><div class="story-contact"><span class="story-avatar">?</span><div><strong>Numero sconosciuto</strong><small>online</small></div><time>23:17</time></div><div class="story-thread" id="story-thread" aria-live="polite">${renderThread()}</div></section>${renderArchive()}</div></main>`;
+    requestAnimationFrame(() => document.querySelector("#thread-end")?.scrollIntoView({ behavior: "smooth", block: "end" }));
+  }
+
+  function setStep(step) { state.step = step; render(); }
+
+  app.addEventListener("click", (event) => {
+    const button = event.target.closest("button, a[data-action]");
+    if (!button) return;
+    const action = button.dataset.action;
+    if (action === "open-conversation") return setStep(1);
+    if (action === "equip-memory") { emit("prototype_memory_equipped", { memory: "breath-before-strike" }); return setStep(3); }
+    if (action === "last-message") { emit("prototype_complete", { mode: state.mode, identity: state.identity, result: state.result }); return setStep(7); }
+    if (action === "conclude") return setStep(8);
+    if (action === "restart") { Object.assign(state, { step: 0, identity: null, mode: null, firstMove: null, finalMove: null, result: null, message: "" }); emit("prototype_start", { source: "restart" }); return render(); }

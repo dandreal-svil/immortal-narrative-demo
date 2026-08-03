@@ -1,0 +1,21 @@
+        <div class="enemy-intent second">${label("◇", "Finestra d’azione")}<strong>La pausa tra il terzo e il quarto respiro.</strong><p>La Memoria pulsa: puoi seguire quel ritmo, ma dovrai attraversare l’istante in cui sei morto.</p></div>`;
+    }
+
+    if (state.step === 5) {
+      html += `<div class="story-choices tactical" aria-label="Decisione finale dello scontro"><button type="button" data-final-move="memory"><strong>Invoca il ricordo</strong><span>Segui il respiro e agisci nella pausa.</span></button><button type="button" data-final-move="open"><strong>Apri la porta</strong><span>Costringi la presenza a mostrarsi.</span></button><button type="button" data-final-move="run"><strong>Spegni tutto e corri</strong><span>Abbandona la stanza prima del prossimo colpo.</span></button></div>`;
+    }
+
+    if (state.step >= 6 && state.finalMove && state.result) {
+      const heading = state.finalMove === "memory" ? "Ricordi il colpo prima che accada." : state.finalMove === "run" ? "L’ombra ti sfiora, ma perdi la sua traccia." : "La porta si apre. L’ombra era già dentro.";
+      const explanation = state.result === "mastered" ? "Hai confrontato il segnale con l’intento e usato la Memoria nella finestra corretta. Il vantaggio ha superato la vulnerabilità." : state.result === "survived" ? "La Memoria ti ha salvato, ma senza una lettura completa hai assorbito parte dell’attacco." : "Hai reagito alla provocazione. Sopravvivi, ma la presenza ha trasformato la tua paura in una ferita persistente.";
+      html += `<div class="battle-resolution ${state.result}"><span>${state.result === "mastered" ? "Scontro dominato" : state.result === "survived" ? "Sei sopravvissuto" : "Sei ferito"}</span><h2>${heading}</h2><p>${explanation}</p>${state.step === 6 ? `<button type="button" data-action="last-message">Leggi l’ultimo messaggio</button>` : ""}</div>`;
+    }
+
+    if (state.step >= 7) {
+      html += `<div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Guarda il vetro della finestra. L’uomo con la barba e il cappello nero è riflesso proprio dietro di te.</div>
+        <div class="narration" role="note" aria-label="Narrazione">${label("✦", "Narrazione")}<p>Nel riflesso, l’uomo inclina appena il capo. Le sue labbra si muovono, ma alle tue spalle non senti alcuna voce.</p></div>
+        <div class="bubble incoming dialogue"><span class="bubble-meta">Dialogo · Uomo nel riflesso</span>Non sono io quello che devi temere.</div>
+        <div class="narration environment-note" role="note" aria-label="Ambiente">${label("◌", "Ambiente · Porta")}<p>I colpi cessano. Dall’altra parte della porta, qualcuno inspira con il tuo stesso ritmo.</p></div>
+        <div class="cliffhanger"><span>Volto riconosciuto</span><strong>Il mittente è nella fotografia.</strong><p>E in questo momento si trova dall’altra parte della porta.</p></div>`;
+    }
+

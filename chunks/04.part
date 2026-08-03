@@ -1,0 +1,20 @@
+    if (state.step === 7) html += `<button class="feedback-open" type="button" data-action="conclude">Concludi il prologo</button>`;
+
+    if (state.step === 8) {
+      html += `<div class="comprehension-check"><span>Verifica di comprensione</span><h2>Prima del feedback</h2><p>Individua nel prologo:</p><ul><li>un messaggio o dialogo;</li><li>un blocco di narrazione;</li><li>una descrizione dell’ambiente;</li><li>una regola di gioco.</li></ul></div>
+      <form class="prototype-feedback" id="feedback-form"><div><span>Fine del prototipo</span><h2>Ci aiuti con sei risposte?</h2><p class="local-only">Demo QA: le risposte restano soltanto in questo browser e non vengono inviate a un server.</p></div>
+        <label>Indicami cosa era un messaggio o dialogo, cosa era narrazione, cosa descriveva l’ambiente e cosa era una regola di gioco.<textarea name="categoryRecognition" required maxlength="700" rows="5" placeholder="Scrivi qui la tua risposta"></textarea></label>
+        <label>Quanto ti sei sentito dentro la storia?<select name="immersionRating" required><option value="" selected disabled>Seleziona 1–5</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+        <label>Hai compreso perché lo scontro ha avuto quell’esito?<select name="battleUnderstanding" required><option value="" selected disabled>Seleziona</option><option value="yes">Sì</option><option value="partly">In parte</option><option value="no">No</option></select></label>
+        <label>Quale elemento ricordi di più?<select name="memorableElement" required><option value="" selected disabled>Seleziona</option><option value="photo">La fotografia</option><option value="identity">La scelta identitaria</option><option value="memory">La Memoria</option><option value="battle">Lo scontro</option><option value="cliffhanger">Il cliffhanger</option></select></label>
+        <label>Vorresti continuare la storia?<select name="wantsContinue" required><option value="" selected disabled>Seleziona</option><option value="yes">Sì</option><option value="maybe">Forse</option><option value="no">No</option></select></label>
+        <label>Voto complessivo<select name="overallRating" required><option value="" selected disabled>Seleziona 1–10</option>${Array.from({ length: 10 }, (_, index) => `<option value="${index + 1}">${index + 1}</option>`).join("")}</select></label>
+        <label>Commento facoltativo<textarea name="comment" maxlength="500" rows="4" placeholder="Cosa cambieresti?"></textarea></label>
+        <button type="submit">Salva il feedback QA</button><p class="form-message" role="status">${state.message}</p></form>`;
+    }
+
+    if (state.step === 9) {
+      html += `<div class="prototype-thanks"><span>Feedback QA salvato</span><h2>Grazie. Il Caso può continuare.</h2><p>${state.message}</p><button type="button" data-action="restart">Ricomincia il prototipo</button></div>`;
+    }
+
+    html += `<div id="thread-end"></div>`;

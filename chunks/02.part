@@ -1,0 +1,23 @@
+        <div class="bubble incoming urgent"><span class="bubble-meta">Messaggio · Sconosciuto</span>Tre colpi. Pausa. Due colpi. Sta iniziando.</div>`;
+    }
+
+    if (state.step === 3) {
+      html += `<div class="mode-picker"><p>Scegli quanta assistenza vuoi durante lo scontro.</p><button type="button" data-mode="story"><strong>Modalità Storia</strong><span>Mostra anche un consiglio tattico.</span></button><button type="button" data-mode="strategist"><strong>Modalità Stratega</strong><span>Mostra soltanto intento e segnali.</span></button></div>`;
+    }
+
+    if (state.step >= 4) {
+      html += `<div class="narration environment-note" role="note" aria-label="Ambiente">${label("◌", "Ambiente · Suono e percezione")}<p>Tre colpi secchi arrivano dalla porta. Nel vetro della finestra, però, un’ombra compare alle tue spalle.</p></div>
+        <div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Guarda il vetro della finestra. L’uomo con la barba e il cappello nero è riflesso proprio dietro di te.</div>
+        <div class="enemy-intent" role="note" aria-label="Intento della presenza">${label("◈", "Intento della presenza")}<strong>Indurti a reagire d’istinto al rumore.</strong><p>I colpi dalla porta sono un’esca: la presenza vuole controllare dove guardi e quando ti muovi.</p></div>
+        <div class="system-signal" role="note" aria-label="Segnale osservato">${label("◇", "Segnale osservato")}<strong>Rumore e posizione non coincidono.</strong><p>Il suono viene dalla porta, ma l’ombra appare nel vetro alle tue spalle.</p></div>
+        ${state.mode === "story" ? `<div class="story-hint" role="note" aria-label="Consiglio della modalità Storia">${label("◎", "Consiglio · Modalità Storia")}<p>Non reagire subito al punto da cui proviene il rumore. Prima individua dove si trova davvero la presenza.</p></div>` : ""}`;
+    }
+
+    if (state.step === 4) {
+      html += `<div class="story-choices tactical" aria-label="Prima decisione tattica">${firstMoves.map((item) => `<button type="button" data-first-move="${item.value}"><strong>${item.label}</strong><span>${item.detail}</span></button>`).join("")}</div>`;
+    }
+
+    if (state.step >= 5 && selectedFirstMove) {
+      const consequence = state.firstMove === "observe" ? "Non ti muovi. Il riflesso anticipa i colpi di mezzo secondo: hai letto il vero attacco." : state.firstMove === "barricade" ? "Il mobile gratta il pavimento. La presenza ottiene ciò che voleva: sa esattamente dove sei." : "La tua voce torna dal corridoio prima ancora che tu finisca la domanda.";
+      html += `<div class="bubble outgoing"><span class="bubble-meta">La tua azione</span>${selectedFirstMove.label}</div>
+        <div class="consequence ${state.firstMove === "observe" ? "positive" : "warning"}">${label("↳", "Conseguenza")}<p>${consequence}</p></div>

@@ -1,0 +1,59 @@
+(() => {
+  "use strict";
+
+  const identities = [
+    { value: "analytical", label: "Cerca la prova", response: "Dimmi come hai ottenuto quella fotografia.", trait: "Analitico — noti le incoerenze prima degli altri." },
+    { value: "determined", label: "Affronta la minaccia", response: "Se sai chi sono, dimmi chi mi ha ucciso.", trait: "Determinato — agisci anche quando il passato fa male." },
+    { value: "empathetic", label: "Cerca il legame", response: "Chi sono gli uomini che mi circondano?", trait: "Empatico — riconosci ciò che gli altri tentano di nascondere." },
+  ];
+
+  const firstMoves = [
+    { value: "observe", label: "Osserva il riflesso", detail: "Rimani immobile e controlli il vetro della finestra." },
+    { value: "barricade", label: "Barrica la porta", detail: "Reagisci al rumore e spingi il mobile contro l’ingresso." },
+    { value: "answer", label: "Chiedi chi è", detail: "Rompi il silenzio e costringi la presenza a rispondere." },
+  ];
+
+  const state = { step: 0, identity: null, mode: null, firstMove: null, finalMove: null, result: null, message: "" };
+  const app = document.querySelector("#app");
+
+  let fallbackSessionId = null;
+
+  function sessionId() {
+    const key = "immortal-m0-demo-session";
+    try {
+      let value = sessionStorage.getItem(key);
+      if (!value) {
+        value = typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        sessionStorage.setItem(key, value);
+      }
+      return value;
+    } catch {
+      if (!fallbackSessionId) {
+        fallbackSessionId = typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      }
+      return fallbackSessionId;
+    }
+  }
+
+  function emit(eventName, metadata = {}) {
+    const payload = { eventName, sessionId: sessionId(), variant: "threshold-memory-v2-phone-thriller", path: location.pathname, timestamp: new Date().toISOString(), metadata };
+    console.info("[Immortal Narrative QA]", payload);
+    window.dispatchEvent(new CustomEvent("immortal-narrative:event", { detail: payload }));
+  }
+
+  function identity() { return identities.find((item) => item.value === state.identity); }
+  function firstMove() { return firstMoves.find((item) => item.value === state.firstMove); }
+
+  function label(symbol, text) {
+    return `<span><b class="label-symbol" aria-hidden="true">${symbol}</b>${text}</span>`;
+  }
+
+  function semanticGuide() {
+    return `<div class="semantic-guide" aria-label="Come leggere la storia">
+      <span class="guide-message"><b>Messaggio / dialogo</b>Qualcuno sta parlando; il nome è visibile.</span>
+      <span class="guide-narration"><b>Narrazione</b>Descrive ciò che fai o ciò che accade.</span>
+      <span class="guide-environment"><b>Ambiente</b>Suoni, immagini e percezioni.</span>
+      <span class="guide-system"><b>Regola di gioco</b>Memorie, segnali, intento e consigli.</span>
+    </div>`;
+  }
+
