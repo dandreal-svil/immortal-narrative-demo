@@ -1,6 +1,5 @@
   function initialThread() {
     return `<p class="story-day">Oggi</p>
-      ${semanticGuide()}
       <div class="bubble incoming"><span class="bubble-meta">Messaggio · Sconosciuto</span>Sei sveglio?</div>
       <div class="bubble incoming urgent"><span class="bubble-meta">Messaggio · Sconosciuto</span>Non aprire la porta.</div>
       <div class="story-photo"><img src="https://immortal-narrative-m0.dandrea-l.chatgpt.site/images/hero-1891-photo.png" alt="Fotografia di gruppo del 1891 con una persona identica al protagonista" width="1456" height="1088"><span>Parigi • 1891</span></div>
