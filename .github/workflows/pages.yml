@@ -5,6 +5,7 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'semantic-ui.js'
       - 'styles.css'
       - '.github/workflows/pages.yml'
   push:
@@ -13,6 +14,7 @@ on:
     paths:
       - 'index.html'
       - 'app.js'
+      - 'semantic-ui.js'
       - 'styles.css'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -40,15 +42,23 @@ jobs:
           node-version: '20'
 
       - name: Check JavaScript syntax
-        run: node --check app.js
+        run: |
+          node --check app.js
+          node --check semantic-ui.js
 
-      - name: Check original v1 contracts
+      - name: Check original baseline and semantic contracts
         run: |
           grep -F 'threshold-memory-v1' app.js
           grep -F 'Ora guarda l’uomo con la barba e il cappello nero, subito dietro di te.' app.js
           grep -F 'Non sono io quello che devi temere.' app.js
           grep -F 'assets/index-CXYED7y6.css' index.html
-          test "$(wc -l < styles.css)" -eq 1
+          grep -F 'semantic-ui.js' index.html
+          grep -F 'dialogue-bubble--mirror' semantic-ui.js
+          grep -F 'Uomo nel riflesso' semantic-ui.js
+          grep -F 'environment-block' semantic-ui.js
+          grep -F 'action-selection' semantic-ui.js
+          grep -F 'border-top: 11px solid var(--dialogue-border)' styles.css
+          grep -F '.narration-block' styles.css
 
   deploy:
     if: github.event_name != 'pull_request'
@@ -67,7 +77,7 @@ jobs:
       - name: Prepare public artifact
         run: |
           mkdir _site
-          cp index.html app.js styles.css _site/
+          cp index.html app.js semantic-ui.js styles.css _site/
           touch _site/.nojekyll
 
       - name: Upload Pages artifact
