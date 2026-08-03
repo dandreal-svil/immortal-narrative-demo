@@ -1,1 +1,222 @@
-/* Nessun override: la demo usa il foglio di stile originale del sito Work. */
+/* Distinzione semantica applicata sopra la grafica originale Phone Thriller. */
+
+/* Dialoghi e messaggi: veri fumetti, con parlante e codina. */
+.dialogue-bubble {
+  --dialogue-bg: #15212b;
+  --dialogue-border: #afcbe852;
+  position: relative;
+  width: fit-content;
+  max-width: 82%;
+  margin: 0 0 17px;
+  padding: 10px 15px 12px;
+  color: var(--cool);
+  background: var(--dialogue-bg);
+  border: 1px solid var(--dialogue-border);
+  border-radius: 17px;
+  font-family: inherit;
+}
+
+.dialogue-bubble::before,
+.dialogue-bubble::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.dialogue-bubble--incoming {
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.dialogue-bubble--incoming::before {
+  bottom: -11px;
+  left: 14px;
+  border-top: 11px solid var(--dialogue-border);
+  border-right: 11px solid transparent;
+}
+
+.dialogue-bubble--incoming::after {
+  bottom: -9px;
+  left: 15px;
+  border-top: 10px solid var(--dialogue-bg);
+  border-right: 10px solid transparent;
+}
+
+.dialogue-bubble--outgoing {
+  --dialogue-bg: #3a2a16;
+  --dialogue-border: #d99a4366;
+  align-self: flex-end;
+  margin-left: auto;
+  color: #f0c784;
+  border-bottom-right-radius: 4px;
+}
+
+.dialogue-bubble--outgoing::before {
+  right: 14px;
+  bottom: -11px;
+  border-top: 11px solid var(--dialogue-border);
+  border-left: 11px solid transparent;
+}
+
+.dialogue-bubble--outgoing::after {
+  right: 15px;
+  bottom: -9px;
+  border-top: 10px solid var(--dialogue-bg);
+  border-left: 10px solid transparent;
+}
+
+.dialogue-bubble--urgent {
+  --dialogue-border: #d99a437d;
+  box-shadow: inset 3px 0 0 var(--amber);
+}
+
+.dialogue-bubble--mirror {
+  --dialogue-bg: #211b14;
+  --dialogue-border: #d99a4373;
+  color: #f0c784;
+}
+
+.dialogue-speaker {
+  display: block;
+  margin-bottom: 5px;
+  color: #8fb7d5;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.dialogue-bubble--outgoing .dialogue-speaker,
+.dialogue-bubble--mirror .dialogue-speaker {
+  color: var(--amber);
+}
+
+.dialogue-speaker b {
+  margin-right: 6px;
+  font-size: 8px;
+}
+
+.dialogue-bubble p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Narrazione: rettangolo, senza codina e senza aspetto da messaggio. */
+.narration-block,
+.story-action-panel.narration-block {
+  width: 100%;
+  margin: 16px 0;
+  padding: 16px 18px;
+  text-align: left;
+  background: #d99a430c;
+  border: 1px solid #d99a4340;
+  border-left: 3px solid var(--amber);
+  border-radius: 0;
+}
+
+.narration-block > span,
+.story-action-panel.narration-block > span {
+  color: var(--amber);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.narration-block p,
+.story-action-panel.narration-block p {
+  margin: 8px 0 0;
+}
+
+.story-action-panel.narration-block button {
+  margin-top: 13px;
+}
+
+/* Ambiente e percezione: rettangolo verde freddo. */
+.environment-block {
+  width: 100%;
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  background: #315a4a18;
+  border: 1px solid #74ad9652;
+  border-left: 3px solid #74ad96;
+}
+
+.environment-block > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #91cbb4;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.environment-block p {
+  margin: 8px 0 0;
+  color: #b8cec6;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+/* Azioni selezionate: rettangolo, non fumetto. */
+.action-selection {
+  width: 86%;
+  margin: 5px 0 15px auto;
+  padding: 14px 16px;
+  text-align: right;
+  color: var(--cool);
+  background: #afcbe80d;
+  border: 1px solid #afcbe82e;
+  border-right: 3px solid var(--cool);
+}
+
+.action-selection > span {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
+  color: #9fc4df;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.action-selection p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* Pannelli di sistema restano rettangolari e distinti per colore/simbolo. */
+.system-line,
+.enemy-intent,
+.story-hint,
+.consequence,
+.memory-reveal,
+.battle-resolution,
+.cliffhanger {
+  border-radius: 0;
+}
+
+@media (max-width: 680px) {
+  .dialogue-bubble {
+    max-width: 90%;
+  }
+
+  .dialogue-bubble p,
+  .environment-block p,
+  .action-selection p {
+    font-size: 13px;
+  }
+}
