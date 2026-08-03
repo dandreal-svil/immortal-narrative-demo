@@ -1,16 +1,194 @@
 /* Semantic clarity revision layered on the original Phone Thriller UI. */
-.skip-link{position:fixed;left:-9999px;top:12px;z-index:1000;background:#fff;color:#111;padding:10px 14px;border-radius:6px}.skip-link:focus{left:12px}
-.semantic-guide{border:1px solid var(--line);background:#0a1117cc;margin:0 0 18px;padding:12px 13px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
-.semantic-guide span{border-left:2px solid currentColor;padding-left:8px;color:var(--muted);font-size:9px;line-height:1.45}
-.semantic-guide b{display:block;letter-spacing:.1em;text-transform:uppercase;font-size:8px;margin-bottom:2px}
-.semantic-guide .guide-message{color:#a9c6e1}.semantic-guide .guide-narration{color:#d2b37a}.semantic-guide .guide-environment{color:#86b7a6}.semantic-guide .guide-system{color:#d18c7f}
-.bubble-meta{display:block;color:#8fb7d5;letter-spacing:.11em;text-transform:uppercase;font:700 8px/1.35 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;margin-bottom:5px}
-.bubble.dialogue{border:1px solid #afcbe83b;background:linear-gradient(135deg,#2740584a,#afcbe814)}
-.narration.environment-note{border-color:#6da58e5e;border-left-color:#74ad96;background:linear-gradient(90deg,#356d581c,#356d5808)}
-.narration.environment-note>span{color:#8bc3ad}
-.system-signal{background:#315a7017;border:1px solid #75b7d847;border-left:3px solid #75b7d8;padding:17px 19px}
-.system-signal>span{color:#91c8e3;letter-spacing:.13em;text-transform:uppercase;align-items:center;gap:7px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:9px;font-weight:700;display:flex}
-.system-signal strong{display:block;margin:7px 0 6px;font-size:14px}.system-signal p{color:var(--muted);margin:0;font-size:12px;line-height:1.6}
-.comprehension-check{background:#171d22;border:1px solid #d99a4352;border-left:3px solid var(--amber);padding:20px;margin-top:18px}.comprehension-check>span{color:var(--amber);letter-spacing:.12em;text-transform:uppercase;font:700 9px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.comprehension-check h2{margin:7px 0 8px;font-size:22px}.comprehension-check p,.comprehension-check li{color:var(--muted);font-size:12px;line-height:1.6}.comprehension-check ul{list-style:disc;padding-left:18px;margin:8px 0 0}
-.local-only{color:#d7b46f!important}
-@media (width<=680px){.semantic-guide{grid-template-columns:1fr 1fr}.semantic-guide span{font-size:8px}}
+
+:root {
+  --story-font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --story-copy-size: 15px;
+  --story-copy-line: 1.62;
+  --story-label-size: 11px;
+}
+
+.skip-link {
+  position: fixed;
+  left: -9999px;
+  top: 12px;
+  z-index: 1000;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #fff;
+  color: #111;
+}
+
+.skip-link:focus { left: 12px; }
+
+/* The categories are learned in context through color, symbol and label. */
+.semantic-guide { display: none !important; }
+
+/* One typographic system for dialogue, narration, environment and mechanics. */
+.bubble,
+.narration,
+.story-action-panel,
+.environment-note,
+.enemy-intent,
+.system-signal,
+.story-hint,
+.consequence,
+.memory-reveal,
+.mode-picker,
+.story-choices,
+.battle-resolution,
+.cliffhanger,
+.comprehension-check,
+.prototype-feedback,
+.prototype-thanks,
+.identity-stamp,
+.system-line {
+  font-family: var(--story-font) !important;
+}
+
+.bubble,
+.narration p,
+.story-action-panel p,
+.environment-note p,
+.enemy-intent p,
+.system-signal p,
+.story-hint p,
+.consequence p,
+.memory-reveal p,
+.mode-picker p,
+.battle-resolution p,
+.cliffhanger p,
+.comprehension-check p,
+.comprehension-check li,
+.prototype-feedback label,
+.prototype-feedback p,
+.prototype-thanks p,
+.identity-stamp strong,
+.system-line {
+  font-family: var(--story-font) !important;
+  font-size: var(--story-copy-size) !important;
+  font-style: normal !important;
+  line-height: var(--story-copy-line) !important;
+}
+
+.bubble {
+  font-size: var(--story-copy-size) !important;
+  line-height: var(--story-copy-line) !important;
+}
+
+/* Labels remain compact but readable. Category is expressed by label + symbol + color. */
+.bubble-meta,
+.narration > span,
+.story-action-panel > span,
+.environment-note > span,
+.enemy-intent > span,
+.system-signal > span,
+.story-hint > span,
+.consequence > span,
+.memory-reveal > div > span,
+.battle-resolution > span,
+.cliffhanger > span,
+.comprehension-check > span,
+.prototype-feedback > div > span,
+.prototype-thanks > span,
+.identity-stamp > span {
+  font-family: var(--story-font) !important;
+  font-size: var(--story-label-size) !important;
+  font-weight: 750 !important;
+  line-height: 1.35 !important;
+  letter-spacing: .065em !important;
+  text-transform: uppercase;
+}
+
+.label-symbol {
+  display: inline-block;
+  margin-right: 7px;
+  font-family: var(--story-font) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+/* Semantic color system. */
+.bubble-meta { color: #9cc7e7 !important; }
+.bubble.dialogue {
+  border: 1px solid #afcbe83b;
+  background: linear-gradient(135deg, #2740584a, #afcbe814);
+}
+
+.narration > span,
+.story-action-panel > span { color: #d9b879 !important; }
+
+.narration.environment-note {
+  border-color: #6da58e5e;
+  border-left-color: #74ad96;
+  background: linear-gradient(90deg, #356d581c, #356d5808);
+}
+
+.narration.environment-note > span { color: #91cbb4 !important; }
+
+.enemy-intent > span { color: #dc9487 !important; }
+
+.system-signal {
+  padding: 17px 19px;
+  border: 1px solid #75b7d847;
+  border-left: 3px solid #75b7d8;
+  background: #315a7017;
+}
+
+.system-signal > span { color: #9bd1eb !important; }
+.story-hint > span { color: #e2bd70 !important; }
+.consequence > span { color: #d7b574 !important; }
+
+.enemy-intent strong,
+.system-signal strong,
+.memory-reveal h2,
+.battle-resolution h2,
+.cliffhanger strong,
+.comprehension-check h2,
+.prototype-feedback h2,
+.prototype-thanks h2 {
+  font-family: var(--story-font) !important;
+}
+
+.enemy-intent strong,
+.system-signal strong,
+.cliffhanger strong {
+  display: block;
+  margin: 7px 0 6px;
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+
+.story-choices button strong,
+.mode-picker button strong {
+  font-family: var(--story-font) !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+.story-choices button span,
+.mode-picker button span {
+  font-family: var(--story-font) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.comprehension-check {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid #d99a4352;
+  border-left: 3px solid var(--amber);
+  background: #171d22;
+}
+
+.comprehension-check > span { color: var(--amber) !important; }
+.comprehension-check h2 { margin: 7px 0 8px; font-size: 22px; }
+.comprehension-check ul { margin: 8px 0 0; padding-left: 18px; list-style: disc; }
+
+.local-only { color: #d7b46f !important; }
+
+@media (max-width: 680px) {
+  :root {
+    --story-copy-size: 15px;
+    --story-label-size: 10.5px;
+  }
+}
