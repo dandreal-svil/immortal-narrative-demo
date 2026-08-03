@@ -4,16 +4,16 @@ on:
   pull_request:
     paths:
       - 'index.html'
+      - 'app.js'
       - 'styles.css'
-      - 'chunks/**'
       - '.github/workflows/pages.yml'
   push:
     branches:
       - main
     paths:
       - 'index.html'
+      - 'app.js'
       - 'styles.css'
-      - 'chunks/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -39,21 +39,16 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Assemble prototype script
-        run: cat chunks/*.part > app.generated.js
-
       - name: Check JavaScript syntax
-        run: node --check app.generated.js
+        run: node --check app.js
 
-      - name: Check recovered UI contracts
+      - name: Check original v1 contracts
         run: |
-          grep -F 'threshold-memory-v2-phone-thriller' app.generated.js
-          grep -F 'Dialogo · Uomo nel riflesso' app.generated.js
-          grep -F 'Ambiente · Suono e percezione' app.generated.js
-          grep -F 'Intento della presenza' app.generated.js
-          grep -F 'Segnale osservato' app.generated.js
-          grep -F 'Consiglio · Modalità Storia' app.generated.js
-          grep -F 'index-CXYED7y6.css' index.html
+          grep -F 'threshold-memory-v1' app.js
+          grep -F 'Ora guarda l’uomo con la barba e il cappello nero, subito dietro di te.' app.js
+          grep -F 'Non sono io quello che devi temere.' app.js
+          grep -F 'assets/index-CXYED7y6.css' index.html
+          test "$(wc -l < styles.css)" -eq 1
 
   deploy:
     if: github.event_name != 'pull_request'
@@ -72,8 +67,7 @@ jobs:
       - name: Prepare public artifact
         run: |
           mkdir _site
-          cp index.html styles.css _site/
-          cat chunks/*.part > _site/app.js
+          cp index.html app.js styles.css _site/
           touch _site/.nojekyll
 
       - name: Upload Pages artifact
