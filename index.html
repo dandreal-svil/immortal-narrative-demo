@@ -5,95 +5,81 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d1014">
   <meta name="description" content="Un thriller interattivo in cui ricostruisci le tue vite perdute e trasformi i ricordi in strategia.">
-  <title>Immortal Narrative — Il passato ha trovato il tuo numero</title>
+  <title>Immortal Narrative — Prototipo esteso v4</title>
   <link rel="stylesheet" href="https://immortal-narrative-m0.dandrea-l.chatgpt.site/assets/index-CXYED7y6.css">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .photo-message img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+    .photo-message--crop img {
+      aspect-ratio: 1 / 1;
+      object-position: 74% 42%;
+      transform: scale(1.45);
+      transform-origin: 74% 42%;
+    }
+    .photo-message--crop {
+      max-height: 390px;
+    }
+    .mini-contact {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 1px 7px;
+      color: #cdd8e3;
+      font-size: .56rem;
+      font-weight: 750;
+    }
+    .mini-contact span {
+      display: grid;
+      place-items: center;
+      width: 17px;
+      height: 17px;
+      border: 1px solid rgba(130,174,218,.34);
+      border-radius: 50%;
+      background: #1a2631;
+    }
+    .flashback-panel {
+      width: min(820px, 100%);
+      padding: clamp(22px, 4vw, 44px);
+      background:
+        linear-gradient(135deg, rgba(217,161,74,.10), transparent 55%),
+        rgba(12,15,20,.96);
+      border: 1px solid rgba(217,161,74,.28);
+      border-radius: 24px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.48);
+    }
+    .flashback-copy {
+      max-width: 66ch;
+      margin: 22px 0;
+      color: #d4d0c8;
+      font: 1.05rem/1.75 Georgia, "Times New Roman", serif;
+    }
+    .flashback-copy blockquote {
+      margin: 22px 0;
+      padding: 14px 18px;
+      color: #f0c783;
+      background: rgba(217,161,74,.08);
+      border-left: 3px solid #d9a14a;
+      font-style: italic;
+    }
+    .speech--revealed {
+      background: #f5eee4;
+    }
+    .experience--solo > .narrative-panel {
+      width: min(760px, 100%);
+    }
+    @media (max-width: 720px) {
+      .flashback-panel { padding: 20px; }
+      .photo-message--crop { max-height: 320px; }
+    }
+  </style>
   <script src="app.js" defer></script>
   <script src="semantic-ui.js" defer></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const originalPhotoUrl = "https://immortal-narrative-m0.dandrea-l.chatgpt.site/images/hero-1891-photo.png";
-
-      const style = document.createElement("style");
-      style.textContent = `
-        .photo-message img {
-          display: block;
-          width: 100%;
-          height: auto;
-          aspect-ratio: 4 / 3;
-          object-fit: cover;
-        }
-        .mini-contact {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin: 0 1px 7px;
-          color: #cdd8e3;
-          font-size: .56rem;
-          font-weight: 750;
-        }
-        .mini-contact span {
-          display: grid;
-          place-items: center;
-          width: 17px;
-          height: 17px;
-          border: 1px solid rgba(130,174,218,.34);
-          border-radius: 50%;
-          background: #1a2631;
-        }
-      `;
-      document.head.append(style);
-
-      function applyDiegeticFixes() {
-        const initialPhoto = document.querySelector(".phone .photo-message svg");
-        if (initialPhoto) {
-          const image = document.createElement("img");
-          image.src = originalPhotoUrl;
-          image.alt = "Fotografia originale del 1891 con una persona identica al protagonista";
-          image.width = 1456;
-          image.height = 1088;
-          image.loading = "eager";
-          image.decoding = "async";
-          initialPhoto.replaceWith(image);
-        }
-
-        document.querySelectorAll(".room-stage").forEach((stage) => {
-          const miniPhone = stage.querySelector(".room-phone-mini");
-          const tacticalTray = stage.querySelector(".tactical-tray");
-
-          if (miniPhone && !tacticalTray) {
-            miniPhone.remove();
-          }
-
-          if (miniPhone && tacticalTray) {
-            if (!miniPhone.querySelector(".mini-contact")) {
-              const contact = document.createElement("div");
-              contact.className = "mini-contact";
-              contact.innerHTML = '<span aria-hidden="true">?</span><strong>Numero sconosciuto</strong>';
-              miniPhone.prepend(contact);
-            }
-
-            const message = miniPhone.querySelector(".chat-bubble");
-            if (message && message.firstChild) {
-              message.firstChild.nodeValue = "Guarda il vetro della finestra. L’uomo col cappello è dietro di te.";
-            }
-          }
-
-          stage.querySelectorAll(".context-chip span").forEach((label) => {
-            if (label.textContent.trim() === "Il tuo istinto") {
-              label.textContent = "Suggerimento · Modalità Storia";
-            }
-          });
-        });
-      }
-
-      applyDiegeticFixes();
-      new MutationObserver(applyDiegeticFixes).observe(document.querySelector("#app"), {
-        childList: true,
-        subtree: true,
-      });
-    });
-  </script>
 </head>
 <body>
   <div id="app"></div>
