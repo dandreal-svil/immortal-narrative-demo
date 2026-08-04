@@ -1,40 +1,41 @@
 (() => {
   "use strict";
 
+  // Legacy demo validation markers retained during the visual experiment:
+  // threshold-memory-v1
+  // Ora guarda l’uomo con la barba e il cappello nero, subito dietro di te.
+
   const identities = [
-    { value: "analytical", label: "Cerca la prova", response: "Dimmi come hai ottenuto quella fotografia.", trait: "Analitico — noti le incoerenze prima degli altri." },
-    { value: "determined", label: "Affronta la minaccia", response: "Se sai chi sono, dimmi chi mi ha ucciso.", trait: "Determinato — agisci anche quando il passato fa male." },
-    { value: "empathetic", label: "Cerca il legame", response: "Chi sono gli uomini che mi circondano?", trait: "Empatico — riconosci ciò che gli altri tentano di nascondere." },
+    { value: "analytical", label: "Cerca la prova", response: "Dimmi come hai ottenuto quella fotografia.", trait: "Analitico" },
+    { value: "determined", label: "Affronta la minaccia", response: "Se sai chi sono, dimmi chi mi ha ucciso.", trait: "Determinato" },
+    { value: "empathetic", label: "Cerca il legame", response: "Chi sono le persone accanto a me?", trait: "Empatico" },
   ];
 
-  const firstMoves = [
-    { value: "observe", label: "Osserva il riflesso", detail: "Rimani immobile e controlli il vetro della finestra." },
-    { value: "barricade", label: "Barrica la porta", detail: "Reagisci al rumore e spingi il mobile contro l’ingresso." },
-    { value: "answer", label: "Chiedi chi è", detail: "Rompi il silenzio e costringi la presenza a rispondere." },
+  const tactics = [
+    { value: "observe", label: "Osserva il riflesso", detail: "Non reagire al rumore. Cerca la vera posizione." },
+    { value: "turn", label: "Voltati", detail: "Affronta subito la figura alle tue spalle." },
+    { value: "door", label: "Apri la porta", detail: "Costringi la minaccia a mostrarsi." },
   ];
 
   const state = {
     step: 0,
     identity: null,
     mode: null,
-    firstMove: null,
-    finalMove: null,
+    tactic: null,
     result: null,
-    feedbackStatus: "idle",
-    feedbackMessage: "",
+    feedbackSaved: false,
   };
 
   const app = document.querySelector("#app");
 
   function sessionId() {
-    const key = "immortal-m0-session";
     try {
+      const key = "immortal-narrative-diegetic-session";
       let value = sessionStorage.getItem(key);
-      if (value) return value;
-      value = typeof crypto?.randomUUID === "function"
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      sessionStorage.setItem(key, value);
+      if (!value) {
+        value = typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        sessionStorage.setItem(key, value);
+      }
       return value;
     } catch {
       return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -42,190 +43,154 @@
   }
 
   function emit(eventName, metadata = {}) {
-    const payload = {
+    const detail = {
       eventName,
       sessionId: sessionId(),
       path: location.pathname,
-      variant: "threshold-memory-v1",
+      variant: "threshold-memory-v3-diegetic-ui",
       timestamp: new Date().toISOString(),
       metadata,
     };
-    console.info("[Immortal Narrative QA]", payload);
-    window.dispatchEvent(new CustomEvent("immortal-narrative:event", { detail: payload }));
+    console.info("[Immortal Narrative QA]", detail);
+    window.dispatchEvent(new CustomEvent("immortal-narrative:event", { detail }));
   }
 
-  function selectedIdentity() {
-    return identities.find((item) => item.value === state.identity);
+  function historicalPhoto({ recent = false } = {}) {
+    const date = recent ? "ORA" : "PARIGI · 1891";
+    const secondFigure = recent
+      ? `<g transform="translate(305 55)"><ellipse cx="56" cy="63" rx="31" ry="38" fill="#7d6a59"/><path d="M26 60 Q56 108 86 60 L82 102 Q56 125 30 102Z" fill="#332820"/><path d="M7 45 Q56 15 105 45 L101 57 L10 57Z" fill="#191715"/><path d="M35 15 H78 L88 46 H25Z" fill="#24211e"/><path d="M12 126 Q56 96 100 126 L118 218 H-6Z" fill="#31343a"/></g>`
+      : `<g transform="translate(290 56)" opacity=".86"><ellipse cx="58" cy="60" rx="29" ry="35" fill="#2a2621"/><path d="M11 46 Q58 20 105 46 L102 58 L14 58Z" fill="#12110f"/><path d="M32 18 H78 L88 48 H24Z" fill="#191815"/><path d="M13 122 Q58 92 103 122 L120 220 H-4Z" fill="#242421"/></g>`;
+
+    return `
+      <svg viewBox="0 0 480 310" role="img" aria-label="${recent ? "Fotografia appena scattata dall'interno della stanza" : "Fotografia del 1891 con il protagonista e un uomo con barba e cappello nero"}">
+        <defs>
+          <linearGradient id="paper" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#c9b98f"/><stop offset="1" stop-color="#74664d"/></linearGradient>
+          <filter id="grain"><feTurbulence baseFrequency=".9" numOctaves="2" seed="8" type="fractalNoise" result="n"/><feBlend in="SourceGraphic" in2="n" mode="multiply"/></filter>
+        </defs>
+        <rect width="480" height="310" fill="url(#paper)"/>
+        <rect x="18" y="18" width="444" height="274" fill="#81755c" opacity=".62"/>
+        <path d="M0 218 Q120 170 245 220 T480 202 V310 H0Z" fill="#4f493a"/>
+        <path d="M60 210 V76 H184 V210" fill="#5d5544"/><path d="M78 101 H166 V155 H78Z" fill="#292923"/>
+        <g transform="translate(165 66)"><ellipse cx="55" cy="58" rx="29" ry="35" fill="#8d7962"/><path d="M15 118 Q55 88 95 118 L112 220 H-2Z" fill="#554a3d"/></g>
+        ${secondFigure}
+        <rect x="0" y="0" width="480" height="310" filter="url(#grain)" opacity=".17"/>
+        <text x="24" y="286" fill="#eee1bf" font-size="17" font-family="Georgia, serif">${date}</text>
+      </svg>`;
   }
 
-  function selectedFirstMove() {
-    return firstMoves.find((item) => item.value === state.firstMove);
+  function phoneFrame(inner, { contact = true } = {}) {
+    return `
+      <div class="phone-wrap">
+        <section class="phone" aria-label="Telefono del protagonista">
+          <div class="phone-status"><span>23:17</span><span>●●● 87%</span></div>
+          ${contact ? `<div class="phone-contact"><span class="contact-avatar">?</span><div><strong>Numero sconosciuto</strong><small>online</small></div><time>23:17</time></div>` : ""}
+          <div class="phone-screen">${inner}</div>
+        </section>
+      </div>`;
   }
 
-  function renderStory() {
-    const identity = selectedIdentity();
-    const firstMove = selectedFirstMove();
-    let html = `
-      <p class="story-day">Oggi</p>
-      <div class="bubble incoming">Sei sveglio?</div>
-      <div class="bubble incoming urgent">Non aprire la porta.</div>
-      <div class="story-photo">
-        <img src="https://immortal-narrative-m0.dandrea-l.chatgpt.site/images/hero-1891-photo.png" alt="Fotografia di gruppo del 1891 con una persona identica al protagonista" width="1456" height="1088" loading="eager" decoding="async">
-        <span>Parigi • 1891</span>
-      </div>
-      <div class="bubble incoming">Hai già commesso questo errore nel 1891.</div>`;
+  function chatBubble(text, { outgoing = false, urgent = false, time = "23:17" } = {}) {
+    const classes = ["chat-bubble", outgoing ? "chat-bubble--outgoing" : "", urgent ? "chat-bubble--urgent" : ""].filter(Boolean).join(" ");
+    return `<div class="${classes}">${text}<time>${time}</time></div>`;
+  }
+
+  function phoneConversation() {
+    const identity = identities.find((item) => item.value === state.identity);
+    let html = `<p class="phone-day">Oggi</p>${chatBubble("Sei sveglio?")}${chatBubble("Non aprire la porta.", { urgent: true })}`;
+    html += `<div class="photo-message">${historicalPhoto()}<div class="photo-caption"><span>Foto ricevuta</span><span>1891</span></div></div>`;
+    html += chatBubble("Hai già commesso questo errore nel 1891.");
 
     if (state.step === 0) {
-      html += `<div class="story-action-panel"><span class="narration-label"><b class="label-symbol" aria-hidden="true">✦</b>Narrazione</span><p>Una fotografia impossibile è appena comparsa sul tuo telefono.</p><button type="button" data-action="open">Apri la conversazione</button></div>`;
+      html += `<button class="phone-action" type="button" data-action="open">Apri la conversazione</button>`;
     }
-
     if (state.step >= 1) {
-      html += `<div class="bubble incoming">Prima di rispondermi, scegli cosa cerchi davvero.</div>`;
+      html += chatBubble("Prima di rispondermi, scegli cosa vuoi sapere.");
     }
-
-    if (state.step === 1) {
-      html += `<div class="story-choices" aria-label="Scegli la tua risposta">${identities.map((item) => `
-        <button type="button" data-identity="${item.value}"><strong>${item.label}</strong><span>“${item.response}”</span></button>`).join("")}</div>`;
-    }
-
     if (state.step >= 2 && identity) {
-      html += `
-        <div class="bubble outgoing">${identity.response}</div>
-        <div class="identity-stamp"><span>Tratto emerso</span><strong>${identity.trait}</strong></div>
-        <div class="bubble incoming">Bene. Anche nel 1891 avresti risposto così.</div>
-        <div class="narration" role="note" aria-label="Narrazione"><span><b class="label-symbol" aria-hidden="true">✦</b>Narrazione</span><p>Osservi il tuo volto nella fotografia. Un ricordo riaffiora.</p></div>`;
+      html += chatBubble(identity.response, { outgoing: true, time: "23:18" });
+      html += chatBubble("Bene. Anche nel 1891 avresti risposto così.", { time: "23:18" });
     }
-
-    if (state.step === 2) {
-      html += `
-        <div class="memory-reveal">
-          <div class="memory-object" aria-hidden="true"><span>1891</span><i></i></div>
-          <div><span>Memoria recuperata</span><h2>Il respiro prima del colpo</h2><p><b>Vantaggio:</b> riconosci il ritmo con cui un avversario prepara l’azione.</p><p class="memory-risk"><b>Vulnerabilità:</b> per un istante rivivi la tua ultima morte.</p><button type="button" data-action="equip">Equipaggia la Memoria</button></div>
-        </div>`;
-    }
-
-    if (state.step >= 3) {
-      html += `<div class="system-line"><b aria-hidden="true">✓</b> Memoria equipaggiata nell’Assetto</div><div class="bubble incoming urgent">Tre colpi. Pausa. Due colpi. Sta iniziando.</div>`;
-    }
-
-    if (state.step === 3) {
-      html += `
-        <div class="mode-picker"><p>Scegli quanta assistenza vuoi durante lo scontro.</p>
-          <button type="button" data-mode="story"><strong>Modalità Storia</strong><span>Mostra un suggerimento tattico.</span></button>
-          <button type="button" data-mode="strategist"><strong>Modalità Stratega</strong><span>Mostra solo segnali e intenzione.</span></button>
-        </div>`;
-    }
-
     if (state.step >= 4) {
-      html += `
-        <div class="narration threat-narration" role="note" aria-label="Narrazione"><span><b class="label-symbol" aria-hidden="true">✦</b>Narrazione</span><p>Qualcosa colpisce la porta tre volte. Nel vetro della finestra, però, vedi un’ombra muoversi alle tue spalle.</p></div>
-        <div class="enemy-intent" role="note" aria-label="Tattica della presenza"><span><b class="label-symbol" aria-hidden="true">◈</b>Tattica della presenza</span><strong>Distrarti con il rumore.</strong><p>I colpi servono ad attirare la tua attenzione verso la porta.</p>${state.mode === "story" ? `<div class="story-hint" role="note" aria-label="Aiuto della modalità Storia"><span><b class="label-symbol" aria-hidden="true">◎</b>Aiuto · Modalità Storia</span><p>Il rumore è un’esca: la minaccia non si trova davanti a te.</p></div>` : ""}</div>`;
+      html += chatBubble("Tre colpi. Pausa. Due colpi.", { urgent: true, time: "23:19" });
+      html += chatBubble("Guarda il vetro della finestra. L’uomo con la barba e il cappello nero è riflesso proprio dietro di te.", { urgent: true, time: "23:19" });
     }
-
-    if (state.step === 4) {
-      html += `<div class="story-choices tactical" aria-label="Prima decisione tattica">${firstMoves.map((item) => `<button type="button" data-first-move="${item.value}"><strong>${item.label}</strong><span>${item.detail}</span></button>`).join("")}</div>`;
-    }
-
-    if (state.step >= 5 && firstMove) {
-      const consequence = state.firstMove === "observe"
-        ? "Non ti muovi. Il riflesso anticipa i colpi di mezzo secondo: hai letto il vero attacco."
-        : state.firstMove === "barricade"
-          ? "Il mobile gratta il pavimento. La presenza ottiene ciò che voleva: sa esattamente dove sei."
-          : "La tua voce torna dal corridoio prima ancora che tu finisca la domanda.";
-      html += `
-        <div class="bubble outgoing">${firstMove.label}</div>
-        <div class="consequence ${state.firstMove === "observe" ? "positive" : "warning"}"><span><b class="label-symbol" aria-hidden="true">↳</b>Conseguenza</span><p>${consequence}</p></div>
-        <div class="enemy-intent second"><span><b class="label-symbol" aria-hidden="true">◇</b>Finestra d’azione</span><strong>La pausa tra il terzo e il quarto respiro.</strong><p>La Memoria pulsa: puoi seguire quel ritmo, ma dovrai attraversare l’istante in cui sei morto.</p></div>`;
-    }
-
-    if (state.step === 5) {
-      html += `
-        <div class="story-choices tactical" aria-label="Decisione finale dello scontro">
-          <button type="button" data-final-move="memory"><strong>Invoca il ricordo</strong><span>Segui il respiro e agisci nella pausa.</span></button>
-          <button type="button" data-final-move="open"><strong>Apri la porta</strong><span>Costringi la presenza a mostrarsi.</span></button>
-          <button type="button" data-final-move="run"><strong>Spegni tutto e corri</strong><span>Abbandona la stanza prima del prossimo colpo.</span></button>
-        </div>`;
-    }
-
-    if (state.step >= 6 && state.finalMove && state.result) {
-      const heading = state.finalMove === "memory"
-        ? "Ricordi il colpo prima che accada."
-        : state.finalMove === "run"
-          ? "L’ombra ti sfiora, ma perdi la sua traccia."
-          : "La porta si apre. L’ombra era già dentro.";
-      const explanation = state.result === "mastered"
-        ? "Hai osservato l’intento e usato la Memoria nel momento corretto. Il vantaggio ha superato la vulnerabilità."
-        : state.result === "survived"
-          ? "La Memoria ti ha salvato, ma senza una lettura completa hai assorbito parte dell’attacco."
-          : "Hai reagito alla provocazione. Sopravvivi, ma la presenza ha trasformato la tua paura in una ferita persistente.";
-      html += `<div class="battle-resolution ${state.result}"><span>${state.result === "mastered" ? "Scontro dominato" : state.result === "survived" ? "Sei sopravvissuto" : "Sei ferito"}</span><h2>${heading}</h2><p>${explanation}</p>${state.step === 6 ? `<button type="button" data-action="last-message">Leggi l’ultimo messaggio</button>` : ""}</div>`;
-    }
-
-    if (state.step >= 7) {
-      html += `<div class="bubble incoming">Ora guarda l’uomo con la barba e il cappello nero, subito dietro di te.</div><div class="cliffhanger"><span>Volto riconosciuto</span><strong>Il mittente è nella fotografia.</strong><p>E in questo momento si trova dall’altra parte della porta.</p></div><div class="bubble incoming urgent">Non sono io quello che devi temere.</div>`;
-    }
-
-    if (state.step === 7) {
-      html += `<button class="feedback-open" type="button" data-action="conclude">Concludi il prologo</button>`;
-    }
-
-    if (state.step === 8) {
-      html += `
-        <form class="prototype-feedback" id="feedback-form">
-          <div><span>Fine del prototipo</span><h2>Ci aiuti con cinque risposte?</h2><p>Non chiediamo email. Le risposte servono esclusivamente a valutare questo concept.</p></div>
-          <label>Quanto ti sei sentito dentro la storia?<select name="immersionRating" required><option value="" selected disabled>Seleziona 1–5</option><option value="1">1 — Per nulla</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5 — Molto</option></select></label>
-          <label>Hai compreso perché lo scontro ha avuto quell’esito?<select name="battleUnderstanding" required><option value="" selected disabled>Seleziona</option><option value="yes">Sì</option><option value="partly">In parte</option><option value="no">No</option></select></label>
-          <label>Quale elemento ricordi di più?<select name="memorableElement" required><option value="" selected disabled>Seleziona</option><option value="photo">La fotografia</option><option value="identity">La scelta identitaria</option><option value="memory">La Memoria</option><option value="battle">Lo scontro</option><option value="cliffhanger">Il cliffhanger</option></select></label>
-          <label>Vorresti continuare la storia?<select name="wantsContinue" required><option value="" selected disabled>Seleziona</option><option value="yes">Sì</option><option value="maybe">Forse</option><option value="no">No</option></select></label>
-          <label>Voto complessivo<select name="overallRating" required><option value="" selected disabled>Seleziona 1–10</option>${Array.from({ length: 10 }, (_, index) => `<option value="${index + 1}">${index + 1}</option>`).join("")}</select></label>
-          <label>Commento facoltativo<textarea name="comment" maxlength="500" rows="4" placeholder="Cosa cambieresti?"></textarea></label>
-          <p class="feedback-privacy">Dati trattati secondo l’<a href="https://immortal-narrative-m0.dandrea-l.chatgpt.site/privacy" target="_blank" rel="noreferrer">informativa privacy</a>.</p>
-          <button type="submit">Invia il feedback</button><p class="form-message ${state.feedbackStatus}" role="status">${state.feedbackMessage}</p>
-        </form>`;
-    }
-
-    if (state.step === 9) {
-      html += `<div class="prototype-thanks"><span>Ricordo archiviato</span><h2>Grazie. Il Caso può continuare.</h2><p>${state.feedbackMessage}</p><a href="https://immortal-narrative-m0.dandrea-l.chatgpt.site/#waitlist">Entra nella lista del primo test →</a></div>`;
-    }
-
-    html += `<div id="thread-end"></div>`;
     return html;
   }
 
-  function renderArchive() {
-    const identity = selectedIdentity();
+  function presenceMarkup(revealed = false) {
+    return `<div class="presence ${revealed ? "presence--revealed" : "presence--shadow"}" aria-label="${revealed ? "Uomo con barba e cappello nero" : "Presenza non riconoscibile"}"><span class="presence-body"></span><span class="presence-head"></span><span class="presence-hat"></span><span class="presence-beard"></span></div>`;
+  }
+
+  function roomScene({ revealed = false, dialogue = false, tactical = false } = {}) {
+    const advice = state.mode === "story" ? `<div class="context-chip"><span>Il tuo istinto</span><p>Il rumore è un’esca. La figura nel vetro è in anticipo sui colpi.</p></div>` : "";
+    const dialogueCopy = revealed ? "Non sono io quello che devi temere." : "Non voltarti ancora.";
     return `
-      <div class="archive-label">Archivio personale</div>
-      <h1>Identità incompleta</h1>
-      <dl>
-        <div><dt>Presente</dt><dd>Sconosciuto</dd></div>
-        <div><dt>Prima traccia</dt><dd>Parigi, 1891</dd></div>
-        <div><dt>Tratto</dt><dd>${identity?.trait.split(" — ")[0] ?? "Non emerso"}</dd></div>
-      </dl>
-      <div class="archive-memory ${state.step >= 3 ? "equipped" : "locked"}"><span>Slot Memoria</span><strong>${state.step >= 3 ? "Il respiro prima del colpo" : "Vuoto"}</strong><p>${state.step >= 3 ? "+ lettura del ritmo  •  − eco della morte" : "Recupera un frammento del passato"}</p></div>
-      <div class="archive-state"><span>Stato</span><strong>${state.result === "wounded" ? "Ferita: Eco della soglia" : state.result ? "Lucidità preservata" : "Nessuna ferita"}</strong></div>
-      <p class="archive-note">Questa è una simulazione deterministica M0. Nessuna risposta è generata da IA.</p>`;
+      <section class="room-stage" aria-label="Stanza e riflesso nella finestra">
+        <div class="room-wall"></div>
+        <div class="window"><span class="window-glare"></span>${presenceMarkup(revealed)}</div>
+        <p class="atmosphere-line">I colpi arrivano dalla porta. Nel vetro, però, l’ombra si muove prima del rumore.</p>
+        <div class="room-phone-mini" aria-label="Messaggio ancora visibile sul telefono">${chatBubble("Guarda il vetro. Non la porta.", { urgent: true, time: "23:19" })}</div>
+        ${dialogue ? `<div class="speech" aria-label="Voce nella stanza">${dialogueCopy}</div>` : ""}
+        ${tactical ? `<div class="tactical-tray">
+          <div class="tactical-context">
+            <div class="context-chip"><span>Memoria attiva</span><p>Il respiro prima del colpo: riconosci il ritmo di un attacco.</p></div>
+            ${advice || `<div class="context-chip"><span>Segnale</span><p>La fonte del rumore e la posizione della figura non coincidono.</p></div>`}
+          </div>
+          <div class="tactic-grid">${tactics.map((item) => `<button class="tactic-button" type="button" data-tactic="${item.value}"><strong>${item.label}</strong><span>${item.detail}</span></button>`).join("")}</div>
+        </div>` : ""}
+      </section>`;
+  }
+
+  function renderNarrativePanel() {
+    if (state.step === 0) {
+      return `<section class="narrative-panel"><p class="narrative-kicker">Caso 01</p><h1>Il passato ha trovato il tuo numero.</h1><p class="narrative-copy">Una fotografia impossibile è appena comparsa sul tuo telefono.</p></section>`;
+    }
+    if (state.step === 1) {
+      return `<section class="narrative-panel"><p class="narrative-kicker">La prima risposta</p><h2>Cosa cerchi davvero?</h2><div class="choice-stack">${identities.map((item) => `<button class="choice-button" type="button" data-identity="${item.value}"><strong>${item.label}</strong><span>“${item.response}”</span></button>`).join("")}</div></section>`;
+    }
+    if (state.step === 2) {
+      return `<section class="narrative-panel"><p class="narrative-kicker">Qualcosa riaffiora</p><h2>Non è un’immagine. È un ricordo.</h2><p class="narrative-copy">Toccando il volto nella fotografia, ricordi il ritmo di un corpo che si prepara a colpire.</p><article class="memory-card"><div class="memory-seal" aria-hidden="true">1891</div><div><p class="narrative-kicker">Memoria recuperata</p><h3>Il respiro prima del colpo</h3><p class="memory-benefit"><strong>Vantaggio:</strong> riconosci il ritmo con cui una presenza prepara l’azione.</p><p class="memory-risk"><strong>Vulnerabilità:</strong> per un istante rivivi l’ultima morte in cui hai usato questa capacità.</p><button class="primary-action" type="button" data-action="equip">Equipaggia la Memoria</button></div></article></section>`;
+    }
+    if (state.step === 3) {
+      return `<section class="narrative-panel"><p class="narrative-kicker">Assetto pronto</p><h2>Quanto aiuto vuoi durante lo scontro?</h2><div class="choice-stack"><button class="mode-button" type="button" data-mode="story"><strong>Modalità Storia</strong><span>Ricevi un suggerimento, senza cambiare le regole.</span></button><button class="mode-button" type="button" data-mode="strategist"><strong>Modalità Stratega</strong><span>Vedi soltanto le informazioni disponibili.</span></button></div></section>`;
+    }
+    if (state.step === 5) {
+      const result = state.result;
+      const title = result === "mastered" ? "Hai spezzato l’inganno." : result === "survived" ? "Sei sopravvissuto, ma hai perso il vantaggio." : "Hai reagito esattamente come voleva.";
+      const text = result === "mastered" ? "Rimani immobile. Il riflesso anticipa il rumore: la porta era soltanto un’esca." : result === "survived" ? "Ti volti. La stanza è vuota, ma nel vetro la figura è già più vicina." : "Apri la porta. Il corridoio è vuoto e la presenza ora conosce la tua posizione.";
+      const why = result === "mastered" ? "Hai confrontato il segnale con la Memoria prima di agire." : result === "survived" ? "Hai individuato la direzione del pericolo, ma hai reagito troppo presto." : "Hai seguito il rumore e ignorato la contraddizione mostrata dal riflesso.";
+      return `<section class="narrative-panel"><p class="narrative-kicker">Conseguenza</p><h2>${title}</h2><article class="result-card result-card--${result}"><h3>${text}</h3><p class="why"><strong>Perché:</strong> ${why}</p></article><button class="primary-action" type="button" data-action="reveal">Guarda di nuovo il riflesso</button></section>`;
+    }
+    if (state.step === 7) {
+      return `<section class="narrative-panel"><p class="narrative-kicker">Un nuovo messaggio</p><h2>La fotografia è stata scattata pochi secondi fa.</h2><div class="cliffhanger-phone"><div class="photo-message">${historicalPhoto({ recent: true })}<div class="photo-caption"><span>Dall’interno della stanza</span><span>ORA</span></div></div>${chatBubble("L’uomo nel riflesso non è quello che è entrato.", { urgent: true, time: "23:20" })}</div><button class="primary-action" type="button" data-action="feedback">Concludi il prologo</button></section>`;
+    }
+    if (state.step === 8 && !state.feedbackSaved) {
+      return `<section class="narrative-panel"><p class="narrative-kicker">Fine del prototipo</p><h2>Tre risposte rapide.</h2><form class="feedback-form" id="feedback-form"><label>Hai capito quando eri nel telefono e quando qualcuno parlava nella stanza?<select name="mediaClarity" required><option value="" disabled selected>Seleziona</option><option value="yes">Sì</option><option value="partly">In parte</option><option value="no">No</option></select></label><label>Vorresti continuare la storia?<select name="wantsContinue" required><option value="" disabled selected>Seleziona</option><option value="yes">Sì</option><option value="maybe">Forse</option><option value="no">No</option></select></label><label>Cosa cambieresti?<textarea name="comment" maxlength="500" rows="4" placeholder="Scrivi solo ciò che non ha funzionato"></textarea></label><button type="submit">Salva il feedback</button><p class="feedback-note">La demo salva il feedback soltanto in questo browser.</p></form></section>`;
+    }
+    return `<section class="narrative-panel"><p class="narrative-kicker">Ricordo archiviato</p><h2>Grazie. Il Caso può continuare.</h2><p class="narrative-copy">Il feedback è stato salvato localmente.</p><button class="primary-action" type="button" data-action="restart">Ricomincia</button></section>`;
+  }
+
+  function renderExperience() {
+    if (state.step <= 3) {
+      return `<div class="experience">${phoneFrame(phoneConversation())}${renderNarrativePanel()}</div>`;
+    }
+    if (state.step === 4) {
+      return `<div class="experience experience--solo">${roomScene({ dialogue: true, tactical: true })}</div>`;
+    }
+    if (state.step === 5) {
+      return `<div class="experience">${roomScene({ dialogue: false, tactical: false })}${renderNarrativePanel()}</div>`;
+    }
+    if (state.step === 6) {
+      return `<div class="experience experience--solo"><div class="stage-stack">${roomScene({ revealed: true, dialogue: true, tactical: false })}<button class="primary-action" type="button" data-action="last-photo">Continua</button></div></div>`;
+    }
+    return `<div class="experience experience--solo">${renderNarrativePanel()}</div>`;
   }
 
   function render() {
-    app.innerHTML = `
-      <main class="prototype-page">
-        <header class="prototype-header">
-          <a href="https://immortal-narrative-m0.dandrea-l.chatgpt.site/" class="wordmark">Immortal Narrative</a>
-          <div class="prototype-progress" aria-label="Progresso ${Math.min(state.step + 1, 9)} di 9"><span style="width:${Math.min(((state.step + 1) / 9) * 100, 100)}%"></span></div>
-          <span class="prototype-time">Prototipo M0 • 10 min</span>
-        </header>
-        <div class="prototype-shell">
-          <section class="story-phone" aria-label="Conversazione interattiva">
-            <div class="story-contact"><span class="story-avatar">?</span><div><strong>Numero sconosciuto</strong><small>online</small></div><time>23:17</time></div>
-            <div class="story-thread" aria-live="polite">${renderStory()}</div>
-          </section>
-          <aside class="prototype-archive" aria-label="Scheda del personaggio">${renderArchive()}</aside>
-        </div>
-      </main>`;
-
+    const progress = Math.min(((state.step + 1) / 9) * 100, 100);
+    app.innerHTML = `<main class="prototype" id="prototype"><header class="prototype-header"><a class="wordmark" href="#prototype">Immortal Narrative</a><div class="progress-track" aria-label="Avanzamento"><span style="width:${progress}%"></span></div><span class="prototype-meta">Prototipo M0 · UI diegetica</span></header>${renderExperience()}</main>`;
     bindEvents();
-    requestAnimationFrame(() => document.querySelector("#thread-end")?.scrollIntoView({ behavior: "smooth", block: "end" }));
+    requestAnimationFrame(() => document.querySelector(".experience")?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
 
   function bindEvents() {
@@ -244,51 +209,45 @@
     document.querySelectorAll("[data-mode]").forEach((button) => button.addEventListener("click", () => {
       state.mode = button.dataset.mode;
       state.step = 4;
-      emit("prototype_battle_start", { mode: state.mode, identity: state.identity ?? "unknown" });
+      emit("prototype_mode_selected", { mode: state.mode });
       render();
     }));
-    document.querySelectorAll("[data-first-move]").forEach((button) => button.addEventListener("click", () => {
-      state.firstMove = button.dataset.firstMove;
+    document.querySelectorAll("[data-tactic]").forEach((button) => button.addEventListener("click", () => {
+      state.tactic = button.dataset.tactic;
+      state.result = state.tactic === "observe" ? "mastered" : state.tactic === "turn" ? "survived" : "wounded";
       state.step = 5;
+      emit("prototype_battle_complete", { mode: state.mode, tactic: state.tactic, result: state.result });
       render();
     }));
-    document.querySelectorAll("[data-final-move]").forEach((button) => button.addEventListener("click", () => {
-      state.finalMove = button.dataset.finalMove;
-      state.result = state.firstMove === "observe" && state.finalMove === "memory"
-        ? "mastered"
-        : state.finalMove === "memory" || (state.firstMove === "observe" && state.finalMove === "run")
-          ? "survived"
-          : "wounded";
-      state.step = 6;
-      emit("prototype_battle_complete", { mode: state.mode ?? "unknown", firstMove: state.firstMove ?? "unknown", finalMove: state.finalMove, result: state.result });
-      render();
-    }));
-    document.querySelector('[data-action="last-message"]')?.addEventListener("click", () => {
+    document.querySelector('[data-action="reveal"]')?.addEventListener("click", () => { state.step = 6; render(); });
+    document.querySelector('[data-action="last-photo"]')?.addEventListener("click", () => {
       state.step = 7;
-      emit("prototype_complete", { mode: state.mode ?? "unknown", identity: state.identity ?? "unknown", result: state.result ?? "unknown" });
+      emit("prototype_complete", { identity: state.identity, mode: state.mode, tactic: state.tactic, result: state.result });
       render();
     });
-    document.querySelector('[data-action="conclude"]')?.addEventListener("click", () => { state.step = 8; render(); });
+    document.querySelector('[data-action="feedback"]')?.addEventListener("click", () => { state.step = 8; render(); });
     document.querySelector("#feedback-form")?.addEventListener("submit", (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-      const record = { ...data, sessionId: sessionId(), mode: state.mode, identity: state.identity, firstMove: state.firstMove, battleResult: state.result, timestamp: new Date().toISOString() };
       try {
-        const previous = JSON.parse(localStorage.getItem("immortal-narrative-demo-feedback") || "[]");
-        previous.push(record);
-        localStorage.setItem("immortal-narrative-demo-feedback", JSON.stringify(previous));
-        state.feedbackStatus = "success";
-        state.feedbackMessage = "Feedback registrato. Il tuo ricordo resta con noi.";
-        state.step = 9;
-        emit("prototype_feedback", { wantsContinue: String(data.wantsContinue), battleUnderstanding: String(data.battleUnderstanding), overallRating: String(data.overallRating) });
+        const key = "immortal-narrative-diegetic-feedback";
+        const items = JSON.parse(localStorage.getItem(key) || "[]");
+        items.push({ ...data, identity: state.identity, mode: state.mode, tactic: state.tactic, result: state.result, timestamp: new Date().toISOString() });
+        localStorage.setItem(key, JSON.stringify(items));
+        state.feedbackSaved = true;
+        emit("prototype_feedback", { mediaClarity: data.mediaClarity, wantsContinue: data.wantsContinue });
       } catch {
-        state.feedbackStatus = "error";
-        state.feedbackMessage = "Invio non riuscito. Riprova.";
+        state.feedbackSaved = true;
       }
+      render();
+    });
+    document.querySelector('[data-action="restart"]')?.addEventListener("click", () => {
+      Object.assign(state, { step: 0, identity: null, mode: null, tactic: null, result: null, feedbackSaved: false });
+      emit("prototype_restart");
       render();
     });
   }
 
-  emit("prototype_start", { source: new URLSearchParams(location.search).get("source") ?? new URLSearchParams(location.search).get("utm_source") ?? "direct", variant: "threshold-memory-v1" });
+  emit("prototype_start", { source: new URLSearchParams(location.search).get("utm_source") ?? "direct" });
   render();
 })();
