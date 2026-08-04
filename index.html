@@ -10,6 +10,90 @@
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
   <script src="semantic-ui.js" defer></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const originalPhotoUrl = "https://immortal-narrative-m0.dandrea-l.chatgpt.site/images/hero-1891-photo.png";
+
+      const style = document.createElement("style");
+      style.textContent = `
+        .photo-message img {
+          display: block;
+          width: 100%;
+          height: auto;
+          aspect-ratio: 4 / 3;
+          object-fit: cover;
+        }
+        .mini-contact {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin: 0 1px 7px;
+          color: #cdd8e3;
+          font-size: .56rem;
+          font-weight: 750;
+        }
+        .mini-contact span {
+          display: grid;
+          place-items: center;
+          width: 17px;
+          height: 17px;
+          border: 1px solid rgba(130,174,218,.34);
+          border-radius: 50%;
+          background: #1a2631;
+        }
+      `;
+      document.head.append(style);
+
+      function applyDiegeticFixes() {
+        const initialPhoto = document.querySelector(".phone .photo-message svg");
+        if (initialPhoto) {
+          const image = document.createElement("img");
+          image.src = originalPhotoUrl;
+          image.alt = "Fotografia originale del 1891 con una persona identica al protagonista";
+          image.width = 1456;
+          image.height = 1088;
+          image.loading = "eager";
+          image.decoding = "async";
+          initialPhoto.replaceWith(image);
+        }
+
+        document.querySelectorAll(".room-stage").forEach((stage) => {
+          const miniPhone = stage.querySelector(".room-phone-mini");
+          const tacticalTray = stage.querySelector(".tactical-tray");
+
+          if (miniPhone && !tacticalTray) {
+            miniPhone.remove();
+          }
+
+          if (miniPhone && tacticalTray) {
+            if (!miniPhone.querySelector(".mini-contact")) {
+              const contact = document.createElement("div");
+              contact.className = "mini-contact";
+              contact.innerHTML = '<span aria-hidden="true">?</span><strong>Numero sconosciuto</strong>';
+              miniPhone.prepend(contact);
+            }
+
+            const message = miniPhone.querySelector(".chat-bubble");
+            if (message && message.firstChild) {
+              message.firstChild.nodeValue = "Guarda il vetro della finestra. L’uomo col cappello è dietro di te.";
+            }
+          }
+
+          stage.querySelectorAll(".context-chip span").forEach((label) => {
+            if (label.textContent.trim() === "Il tuo istinto") {
+              label.textContent = "Suggerimento · Modalità Storia";
+            }
+          });
+        });
+      }
+
+      applyDiegeticFixes();
+      new MutationObserver(applyDiegeticFixes).observe(document.querySelector("#app"), {
+        childList: true,
+        subtree: true,
+      });
+    });
+  </script>
 </head>
 <body>
   <div id="app"></div>
