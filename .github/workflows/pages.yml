@@ -57,6 +57,9 @@ jobs:
           grep -F 'assets/index-CXYED7y6.css' index.html
           grep -F 'central-feedback-v2.js' index.html
           grep -F 'formsubmit.co/immortalnarrative.project@gmail.com' central-feedback-v2.js
+          grep -F 'function setTextIfChanged' central-feedback-v2.js
+          grep -F 'element.textContent === value' central-feedback-v2.js
+          grep -F 'new MutationObserver(renderStatus).observe(app' central-feedback-v2.js
           grep -F 'semantic-ui.js' index.html
           grep -F 'dialogue-bubble--mirror' semantic-ui.js
           grep -F 'Uomo nel riflesso' semantic-ui.js
