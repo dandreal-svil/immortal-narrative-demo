@@ -96,6 +96,16 @@
     return `mailto:immortalnarrative.project@gmail.com?subject=${subject}&body=${body}`;
   }
 
+  function setTextIfChanged(element, value) {
+    if (!element || element.textContent === value) return;
+    element.textContent = value;
+  }
+
+  function setHtmlIfChanged(element, value) {
+    if (!element || element.innerHTML === value) return;
+    element.innerHTML = value;
+  }
+
   function ensureStatusElement() {
     const panel = document.querySelector(".experience--solo .narrative-panel");
     if (!panel || !/Grazie|Ricordo archiviato/i.test(panel.textContent)) return null;
@@ -112,24 +122,31 @@
 
   function renderStatus() {
     const note = document.querySelector(".feedback-note");
-    if (note) {
-      note.textContent = "Le risposte vengono inviate anonimamente alla casella del progetto. Una copia resta nel browser come sicurezza.";
-    }
+    setTextIfChanged(
+      note,
+      "Le risposte vengono inviate anonimamente alla casella del progetto. Una copia resta nel browser come sicurezza.",
+    );
 
     const finalCopy = document.querySelector(".experience--solo .narrative-panel .narrative-copy");
     if (finalCopy && /salvato localmente|stato registrato/i.test(finalCopy.textContent)) {
-      finalCopy.textContent = "Il feedback è stato registrato. Verifica della consegna alla casella del progetto in corso.";
+      setTextIfChanged(
+        finalCopy,
+        "Il feedback è stato registrato. Verifica della consegna alla casella del progetto in corso.",
+      );
     }
 
     const status = ensureStatusElement();
     if (!status || !delivery) return;
 
     if (delivery.status === "sending") {
-      status.textContent = "Invio anonimo del feedback in corso…";
+      setTextIfChanged(status, "Invio anonimo del feedback in corso…");
     } else if (delivery.status === "submitted") {
-      status.textContent = "Feedback consegnato al servizio email e salvato anche nel browser.";
+      setTextIfChanged(status, "Feedback consegnato al servizio email e salvato anche nel browser.");
     } else {
-      status.innerHTML = `L’invio automatico non è riuscito. Il feedback è al sicuro nel browser. <a href="${fallbackMailto(delivery.payload)}" style="color:#f0c783;font-weight:800">Invialo tramite email</a>.`;
+      setHtmlIfChanged(
+        status,
+        `L’invio automatico non è riuscito. Il feedback è al sicuro nel browser. <a href="${fallbackMailto(delivery.payload)}" style="color:#f0c783;font-weight:800">Invialo tramite email</a>.`,
+      );
     }
   }
 
@@ -223,7 +240,10 @@
     deliver(payload);
   }
 
-  new MutationObserver(renderStatus).observe(document.documentElement, { childList: true, subtree: true });
+  const app = document.querySelector("#app");
+  if (app) {
+    new MutationObserver(renderStatus).observe(app, { childList: true, subtree: true });
+  }
 
   document.addEventListener("submit", (event) => {
     const form = event.target;
